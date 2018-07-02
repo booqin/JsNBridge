@@ -1,9 +1,9 @@
 package xinguang.com.xgjsbridgedemo;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.webkit.WebView;
 
 import xinguang.com.xgjsbridge.XGNBridge;
@@ -17,7 +17,6 @@ public class WebViewActivity extends Activity{
     private WebView mWebView;
     private XGNBridge mJsBridge;
 
-    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +24,11 @@ public class WebViewActivity extends Activity{
         mWebView = findViewById(R.id.web_view);
         mJsBridge = new XGNBridge(mWebView);
         mWebView.loadUrl("file:///android_asset/XGJSBridgeDemo.html");
-
+        findViewById(R.id.bt_change).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mJsBridge.getJSApi().notifyTokenChange();
+            }
+        });
     }
 }

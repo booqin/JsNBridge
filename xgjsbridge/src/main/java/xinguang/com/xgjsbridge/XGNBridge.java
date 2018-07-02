@@ -11,6 +11,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import xinguang.com.xgjsbridge.api.JSApi;
+import xinguang.com.xgjsbridge.api.JavaApi;
 import xinguang.com.xgjsbridge.interfaces.IXGJSCallHandler;
 import xinguang.com.xgjsbridge.interfaces.IXGJavaCallHandler;
 import xinguang.com.xgjsbridge.utils.BridgeUtil;
@@ -21,13 +23,14 @@ import xinguang.com.xgjsbridge.utils.BridgeUtil;
 
 public class XGNBridge implements IXGJavaCallHandler{
 
-    private static final String NOTIFY_SUBSCRIBE_HANDLE = "javascript:XGJSBridge.subscribeHandler('%s','%s')";
     private static final String XGJS = "XGJSCore";
     private static final String toLoadJs = "XGJSBridge.js";
 
     private WebView mWebView;
 
-    private JsCallJava mJsCall;
+    private BaseJavascriptInterface mJavascriptInterface;
+
+    private JSApi mJSApi;
 
     public XGNBridge(WebView webView){
         mWebView = webView;
@@ -37,7 +40,7 @@ public class XGNBridge implements IXGJavaCallHandler{
     @SuppressLint("SetJavaScriptEnabled")
     private void init(WebView webView){
         //app提供给js的接口
-        mJsCall = new JsCallJava(this);
+        mJavascriptInterface = new BaseJavascriptInterface(this);
         if (webView == null) {
             return;
         }
@@ -49,7 +52,7 @@ public class XGNBridge implements IXGJavaCallHandler{
             WebView.setWebContentsDebuggingEnabled(true);
         }
         webView.setWebViewClient(generateBridgeWebViewClient());
-        webView.addJavascriptInterface(mJsCall, XGJS);
+        webView.addJavascriptInterface(mJavascriptInterface, XGJS);
 
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         WebSettings settings = mWebView.getSettings();
@@ -57,12 +60,14 @@ public class XGNBridge implements IXGJavaCallHandler{
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setDomStorageEnabled(true);
 
-        addJsCallHandler(new UseInfoHandler());
+        registerJsCallHandler(JavaApi.UserInfoHandler);
+
+        mJSApi = new JSApi(this);
 
     }
 
-    public void addJsCallHandler(IXGJSCallHandler ixgBridgeHandler){
-        mJsCall.addCall(ixgBridgeHandler);
+    public void registerJsCallHandler(IXGJSCallHandler ixgBridgeHandler){
+        mJavascriptInterface.addCall(ixgBridgeHandler);
     }
 
     /**
@@ -108,11 +113,6 @@ public class XGNBridge implements IXGJavaCallHandler{
 
     }
 
-    public void callJs(String event, String data){
-        String jsCommand = String.format(NOTIFY_SUBSCRIBE_HANDLE, event, data);
-        send(jsCommand);
-    }
-
     private void loadUrl(String jsCommand){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             mWebView.evaluateJavascript(jsCommand, new ValueCallback<String>() {
@@ -124,5 +124,13 @@ public class XGNBridge implements IXGJavaCallHandler{
         }else {
             mWebView.loadUrl(jsCommand);
         }
+    }
+
+    public JSApi getJSApi() {
+        return mJSApi;
+    }
+
+    public void setJSApi(JSApi jsApi) {
+        this.mJSApi = jsApi;
     }
 }

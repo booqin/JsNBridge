@@ -15,7 +15,7 @@ import xinguang.com.xgjsbridge.utils.JsonUtil;
  * Created by vitozhang on 2018/6/29.
  */
 
-public class JsCallJava {
+public class BaseJavascriptInterface {
 
     private static final String INVOKE_CALLBACK_HANDLE = "javascript:XGJSBridge.invokeCallbackHandler('%s','%s')";
 
@@ -23,7 +23,7 @@ public class JsCallJava {
 
     private IXGJavaCallHandler mJavaCallHandler;
 
-    public JsCallJava(IXGJavaCallHandler javaCallHandler){
+    public BaseJavascriptInterface(IXGJavaCallHandler javaCallHandler){
         mNativeCallMap = new HashMap<>();
         mJavaCallHandler = javaCallHandler;
     }

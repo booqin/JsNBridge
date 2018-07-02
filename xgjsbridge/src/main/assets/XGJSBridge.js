@@ -102,6 +102,6 @@
         //Web订阅App事件,Web使用
         subscribe: subscribe,
         //App发送事件给Web,App使用
-        : subscribeHandler
+        subscribeHandler: subscribeHandler
     };
 })();
