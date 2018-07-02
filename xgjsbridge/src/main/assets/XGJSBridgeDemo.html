@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>新光Web-App交互Demo</title>
-    <link href="css/index.css" rel="stylesheet">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>新光Web-App交互Demo</title>
+	<link href="css/index.css" rel="stylesheet">
 </head>
 <body>
 <!--头部-->
@@ -16,16 +16,16 @@
 <div id="main">
 	<br />
 	<div id="J_UserInfo" style="color: #A9A9A9">当前用户信息：</div>
-    <button type="button" onclick="button_getUserInfo();">获取用户信息</button>
+	<button type="button" onclick="button_getUserInfo();">获取用户信息</button>
 	<br />
 	<br />
 	<br />
-	
-    <button type="button" onclick="button_loginClick();">点击调用App登录</button>
+
+	<button type="button" onclick="button_loginClick();">点击调用App登录</button>
 	<br />
 	<br />
 	<br />
-	
+
 	<div>
 		<text style="color: #3CB371">优惠券id</text>
 		<input id="button_getCoupon" placeholder="请输入优惠券" type="text" value="">
@@ -35,7 +35,7 @@
 	<br />
 	<br />
 	<br />
-	
+
 	<div class="main-search">
 		<text style="color: #3CB371">跳转链接</text>
 		<input id="button_linkTo" placeholder="请输入跳转链接" type="text" value="sjyx://webpage?url=http://www.baidu.com">
@@ -45,7 +45,7 @@
 	<br />
 	<br />
 	<br />
-	
+
 	<div class="main-search">
 		<text style="color: #3CB371">店铺id</text>
 		<input id="shopid" placeholder="请输入店铺id" type="text" value="7044">
@@ -134,7 +134,6 @@
 		window.XGJSBridge && button_getUserInfo();
         window.XGJSBridge && window.XGJSBridge.subscribe('userInfoChange',receiveUserInfo);
 	}
-
 	judgeIsAppWeb();
 
 

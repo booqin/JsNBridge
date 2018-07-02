@@ -87,7 +87,7 @@ public class BridgeUtil {
 
             bufferedReader.close();
             in.close();
- 
+
             return sb.toString();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -37,7 +37,7 @@
         if (isIosWebView) {
             window.webkit.messageHandlers.invokeHandler.postMessage({
                 event: event,
-                params: param   sString,
+                params: paramsString,
                 callbackId: callbackId,
             });
         } else {
@@ -102,7 +102,6 @@
         //Web订阅App事件,Web使用
         subscribe: subscribe,
         //App发送事件给Web,App使用
-        subscribeHandler: subscribeHandler
-    }
-
+        : subscribeHandler
+    };
 })();
