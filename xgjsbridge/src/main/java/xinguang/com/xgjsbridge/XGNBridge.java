@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Looper;
 import android.view.View;
 import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -32,27 +33,31 @@ public class XGNBridge implements IXGJavaCallHandler{
 
     private JSApi mJSApi;
 
+    private WebViewClient mWebViewClient;
+
+    private WebChromeClient mWebChromeClient;
+
     public XGNBridge(WebView webView){
-        mWebView = webView;
         init(webView);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private void init(WebView webView){
         //app提供给js的接口
+        mWebView = webView;
         mJavascriptInterface = new BaseJavascriptInterface(this);
-        if (webView == null) {
+        if (mWebView == null) {
             return;
         }
 
-        webView.setVerticalScrollBarEnabled(false);
-        webView.setHorizontalScrollBarEnabled(false);
-        webView.getSettings().setJavaScriptEnabled(true);
+        mWebView.setVerticalScrollBarEnabled(false);
+        mWebView.setHorizontalScrollBarEnabled(false);
+        mWebView.getSettings().setJavaScriptEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(true);
         }
-        webView.setWebViewClient(generateBridgeWebViewClient());
-        webView.addJavascriptInterface(mJavascriptInterface, XGJS);
+        mWebView.setWebViewClient(generateBridgeWebViewClient());
+        mWebView.addJavascriptInterface(mJavascriptInterface, XGJS);
 
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         WebSettings settings = mWebView.getSettings();
@@ -77,24 +82,35 @@ public class XGNBridge implements IXGJavaCallHandler{
         return new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                return super.shouldOverrideUrlLoading(view, url);
+                if (mWebViewClient!=null) {
+                    return mWebViewClient.shouldOverrideUrlLoading(view, url);
+                }else {
+                    return super.shouldOverrideUrlLoading(view, url);
+                }
             }
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
+                if (mWebViewClient!=null) {
+                    mWebViewClient.onPageStarted(view, url, favicon);
+                }else {
+                    super.onPageStarted(view, url, favicon);
+                }
                 BridgeUtil.webViewLoadLocalJs(view, toLoadJs);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
+                if (mWebViewClient!=null) {
+                    mWebViewClient.onPageFinished(view, url);
+                }else {
+                    super.onPageFinished(view, url);
+                }
             }
 
 
         };
     }
-
 
     @Override
     public void send(final String jsCommand) {
@@ -124,6 +140,15 @@ public class XGNBridge implements IXGJavaCallHandler{
     public void onDestroy(){
         mWebView = null;
         mJavascriptInterface.onDestroy();
+    }
+
+    public void setWebViewClient(WebViewClient webViewClient){
+        mWebViewClient = webViewClient;
+    }
+
+    public void setWebChromeClient(WebChromeClient webChromeClient){
+        mWebChromeClient = webChromeClient;
+        mWebView.setWebChromeClient(mWebChromeClient);
     }
 
 
