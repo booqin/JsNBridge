@@ -65,8 +65,6 @@ public class XGNBridge implements IXGJavaCallHandler{
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setDomStorageEnabled(true);
 
-        registerJsCallHandler(JavaApi.UserInfoHandler);
-
         mJSApi = new JSApi(this);
 
     }
