@@ -113,6 +113,20 @@ public class XGNBridge implements IXGJavaCallHandler{
 
     }
 
+    public JSApi getJSApi() {
+        return mJSApi;
+    }
+
+    public void setJSApi(JSApi jsApi) {
+        this.mJSApi = jsApi;
+    }
+
+    public void onDestroy(){
+        mWebView = null;
+        mJavascriptInterface.onDestroy();
+    }
+
+
     private void loadUrl(String jsCommand){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             mWebView.evaluateJavascript(jsCommand, new ValueCallback<String>() {
@@ -124,13 +138,5 @@ public class XGNBridge implements IXGJavaCallHandler{
         }else {
             mWebView.loadUrl(jsCommand);
         }
-    }
-
-    public JSApi getJSApi() {
-        return mJSApi;
-    }
-
-    public void setJSApi(JSApi jsApi) {
-        this.mJSApi = jsApi;
     }
 }

@@ -45,12 +45,19 @@ public class BaseJavascriptInterface {
                 @Override
                 public void onCallBack(String data) {
                     String jsCommand = String.format(INVOKE_CALLBACK_HANDLE, callbackId, JsonUtil.toJsonString(data));
-                    mJavaCallHandler.send(jsCommand);
+                    if (mJavaCallHandler!=null) {
+                        mJavaCallHandler.send(jsCommand);
+                    }
                 }
 
             });
         }
         return "";
+    }
+
+    public void onDestroy(){
+        mNativeCallMap.clear();
+        mJavaCallHandler = null;
     }
 
 }
