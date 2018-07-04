@@ -12,7 +12,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import xinguang.com.xgjsbridge.WebClient.JSWebViewClient;
-import xinguang.com.xgjsbridge.api.JSApi;
 import xinguang.com.xgjsbridge.interfaces.IJavascriptInterface;
 import xinguang.com.xgjsbridge.interfaces.IXGInterceptor;
 import xinguang.com.xgjsbridge.interfaces.IXGToJavaHandler;
@@ -31,17 +30,15 @@ public class XGNBridge implements IXGToJsHandler {
 
     private JavascriptInterfaceImpl mJavascriptInterface;
 
-    private JSApi mJSApi;
-
-    public XGNBridge(WebView webView){
-        init(webView);
+    private XGNBridge(){
+        mJavascriptInterface = new JavascriptInterfaceImpl(this);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private void init(WebView webView){
         //app提供给js的接口
         mWebView = webView;
-        mJavascriptInterface = new JavascriptInterfaceImpl(this);
+
         if (mWebView == null) {
             return;
         }
@@ -99,14 +96,6 @@ public class XGNBridge implements IXGToJsHandler {
 
     }
 
-    public JSApi getJSApi() {
-        return mJSApi;
-    }
-
-    public void setJSApi(JSApi jsApi) {
-        this.mJSApi = jsApi;
-    }
-
     public void onDestroy(){
         mWebView.setWebViewClient(null);
         mWebView.setWebChromeClient(null);
@@ -135,5 +124,35 @@ public class XGNBridge implements IXGToJsHandler {
         }else {
             mWebView.loadUrl(jsCommand);
         }
+    }
+
+    public static class XGNBridgeBuilder{
+
+        private XGNBridge xgnBridge;
+
+        public XGNBridgeBuilder(){
+            xgnBridge = new XGNBridge();
+        }
+
+        public XGNBridgeBuilder registerToJavaHandler(IXGToJavaHandler ixgBridgeHandler){
+            xgnBridge.registerJsCallHandler(ixgBridgeHandler);
+            return this;
+        }
+
+        public XGNBridgeBuilder registerInterceptor(IXGInterceptor javaApiInterceptor){
+            xgnBridge.registerInterceptor(javaApiInterceptor);
+            return this;
+        }
+
+        public XGNBridgeBuilder setDefaultHandler(IJavascriptInterface javascriptInterface){
+            xgnBridge.setDefaultHandler(javascriptInterface);
+            return this;
+        }
+
+        public XGNBridge build(WebView webView){
+            xgnBridge.init(webView);
+            return xgnBridge;
+        }
+
     }
 }

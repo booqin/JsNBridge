@@ -1,4 +1,4 @@
-package xinguang.com.xgjsbridge.api;
+package xinguang.com.xgjsbridgedemo.api;
 
 import java.util.HashMap;
 

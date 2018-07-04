@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply from: 'maven-push.gradle'//添加Maven发布插件
 
 android {
     compileSdkVersion 26

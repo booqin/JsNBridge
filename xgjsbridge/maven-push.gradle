@@ -1,0 +1,40 @@
+apply plugin: 'maven'
+
+def getReleaseRepositoryUrl() {
+    return "http://172.16.2.73:8081/repository/maven-releases/"
+}
+
+def getSnapshotRepositoryUrl() {
+    return "http://172.16.2.73:8081/repository/maven-snapshots/"
+}
+
+def getRepositoryUsername() {
+    return 'admin'
+}
+
+def getRepositoryPassword() {
+    return 'admin123'
+}
+
+//def isReleasePush() {
+//    return getProject().hasProperty("aarRelease")&&getProject().ext. ?"";
+//}
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: getReleaseRepositoryUrl()) {
+                authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+            }
+            snapshotRepository(url: getSnapshotRepositoryUrl()) {
+                authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+            }
+            pom.groupId = "com.xgn.public"
+            pom.artifactId = project.module_name
+            pom.version = project.version + "-SNAPSHOT"//(isReleasePush() == "false") ? "-SNAPSHOT" : ""
+            pom.name = project.module_name
+            pom.packaging = 'aar'
+        }
+    }
+}

@@ -1,4 +1,4 @@
-package xinguang.com.xgjsbridge.api;
+package xinguang.com.xgjsbridgedemo.api;
 
 
 import java.util.HashMap;
@@ -30,26 +30,5 @@ public abstract class JavaApi {
             function.onCallBack(JsonUtil.toJsonString(map));
         }
     };
-
-    public static IXGToJavaHandler LoginHandler = new IXGToJavaHandler() {
-        @Override
-        public String getMethodName() {
-            return "login";
-        }
-
-        @Override
-        public void handler(String data, CallBackFunction function) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put("name", "to Login");
-            function.onCallBack(JsonUtil.toJsonString(map));
-        }
-    };
-
-    public abstract static class ShareConfigHandler implements IXGToJavaHandler {
-        @Override
-        public String getMethodName() {
-            return "shareConfig";
-        }
-    }
 
 }
