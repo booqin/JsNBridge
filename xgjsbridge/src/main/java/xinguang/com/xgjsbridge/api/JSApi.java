@@ -1,11 +1,8 @@
 package xinguang.com.xgjsbridge.api;
 
-/**
- * Created by vitozhang on 2018/7/2.
- */
+import java.util.HashMap;
 
-import xinguang.com.xgjsbridge.XGNBridge;
-import xinguang.com.xgjsbridge.interfaces.IXGJavaCallHandler;
+import xinguang.com.xgjsbridge.interfaces.IXGToJsHandler;
 import xinguang.com.xgjsbridge.utils.JsonUtil;
 
 /**
@@ -19,15 +16,21 @@ public class JSApi {
 
     private static final String NOTIFY_SUBSCRIBE_HANDLE = "javascript:XGJSBridge.subscribeHandler('%s','%s')";
 
-    private IXGJavaCallHandler mJavaCallHandler;
+    private IXGToJsHandler mJavaCallHandler;
 
-    public JSApi(IXGJavaCallHandler javaCallHandler){
+    public JSApi(IXGToJsHandler javaCallHandler){
         mJavaCallHandler = javaCallHandler;
     }
 
     public void notifyTokenChange(){
-        String jsCommand = String.format(NOTIFY_SUBSCRIBE_HANDLE, "userInfoChange", JsonUtil.toJsonString("{ 'name':'Vito'}"));
+        String jsCommand = String.format(NOTIFY_SUBSCRIBE_HANDLE, "userInfoChange", JsonUtil.toJsonString(getUserInfo()));
         mJavaCallHandler.send(jsCommand);
+    }
+
+    private Object getUserInfo() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("name", "error");
+        return map;
     }
 
 }

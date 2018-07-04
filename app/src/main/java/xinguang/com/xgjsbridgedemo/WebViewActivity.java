@@ -7,6 +7,7 @@ import android.view.View;
 import android.webkit.WebView;
 
 import xinguang.com.xgjsbridge.XGNBridge;
+import xinguang.com.xgjsbridge.api.JSApi;
 import xinguang.com.xgjsbridge.api.JavaApi;
 
 /**
@@ -29,7 +30,7 @@ public class WebViewActivity extends Activity{
         findViewById(R.id.bt_change).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mJsBridge.getJSApi().notifyTokenChange();
+                new JSApi(mJsBridge).notifyTokenChange();
             }
         });
     }

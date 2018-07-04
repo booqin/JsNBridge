@@ -1,7 +1,11 @@
 package xinguang.com.xgjsbridge.api;
 
+
+import java.util.HashMap;
+
 import xinguang.com.xgjsbridge.interfaces.CallBackFunction;
-import xinguang.com.xgjsbridge.interfaces.IXGJSCallHandler;
+import xinguang.com.xgjsbridge.interfaces.IXGToJavaHandler;
+import xinguang.com.xgjsbridge.utils.JsonUtil;
 
 /**
  * 提供给JS使用到java代码，根据前端要求添加java协议代码
@@ -10,9 +14,10 @@ import xinguang.com.xgjsbridge.interfaces.IXGJSCallHandler;
  *
  * @Version
  */
-public class JavaApi {
+public abstract class JavaApi {
 
-    public static IXGJSCallHandler UserInfoHandler = new IXGJSCallHandler() {
+    public static IXGToJavaHandler UserInfoHandler = new IXGToJavaHandler() {
+
         @Override
         public String getMethodName() {
             return "getUserInfo";
@@ -20,7 +25,31 @@ public class JavaApi {
 
         @Override
         public void handler(String data, CallBackFunction function) {
-            function.onCallBack("{ 'name':'BoQin'}");
+            HashMap<String, String> map = new HashMap<>();
+            map.put("name", "BQ");
+            function.onCallBack(JsonUtil.toJsonString(map));
         }
     };
+
+    public static IXGToJavaHandler LoginHandler = new IXGToJavaHandler() {
+        @Override
+        public String getMethodName() {
+            return "login";
+        }
+
+        @Override
+        public void handler(String data, CallBackFunction function) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("name", "to Login");
+            function.onCallBack(JsonUtil.toJsonString(map));
+        }
+    };
+
+    public abstract static class ShareConfigHandler implements IXGToJavaHandler {
+        @Override
+        public String getMethodName() {
+            return "shareConfig";
+        }
+    }
+
 }

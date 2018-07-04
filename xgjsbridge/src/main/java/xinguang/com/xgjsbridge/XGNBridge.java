@@ -2,7 +2,6 @@ package xinguang.com.xgjsbridge;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Looper;
 import android.view.View;
@@ -12,30 +11,27 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import xinguang.com.xgjsbridge.WebClient.JSWebViewClient;
 import xinguang.com.xgjsbridge.api.JSApi;
-import xinguang.com.xgjsbridge.api.JavaApi;
-import xinguang.com.xgjsbridge.interfaces.IXGJSCallHandler;
-import xinguang.com.xgjsbridge.interfaces.IXGJavaCallHandler;
-import xinguang.com.xgjsbridge.utils.BridgeUtil;
+import xinguang.com.xgjsbridge.interfaces.IJavascriptInterface;
+import xinguang.com.xgjsbridge.interfaces.IXGInterceptor;
+import xinguang.com.xgjsbridge.interfaces.IXGToJavaHandler;
+import xinguang.com.xgjsbridge.interfaces.IXGToJsHandler;
+
 
 /**
  * Created by vitozhang on 2018/6/29.
  */
 
-public class XGNBridge implements IXGJavaCallHandler{
+public class XGNBridge implements IXGToJsHandler {
 
     private static final String XGJS = "XGJSCore";
-    private static final String toLoadJs = "XGJSBridge.js";
 
     private WebView mWebView;
 
-    private BaseJavascriptInterface mJavascriptInterface;
+    private JavascriptInterfaceImpl mJavascriptInterface;
 
     private JSApi mJSApi;
-
-    private WebViewClient mWebViewClient;
-
-    private WebChromeClient mWebChromeClient;
 
     public XGNBridge(WebView webView){
         init(webView);
@@ -45,7 +41,7 @@ public class XGNBridge implements IXGJavaCallHandler{
     private void init(WebView webView){
         //app提供给js的接口
         mWebView = webView;
-        mJavascriptInterface = new BaseJavascriptInterface(this);
+        mJavascriptInterface = new JavascriptInterfaceImpl(this);
         if (mWebView == null) {
             return;
         }
@@ -65,49 +61,25 @@ public class XGNBridge implements IXGJavaCallHandler{
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setDomStorageEnabled(true);
 
-        mJSApi = new JSApi(this);
-
     }
 
-    public void registerJsCallHandler(IXGJSCallHandler ixgBridgeHandler){
+    public void registerJsCallHandler(IXGToJavaHandler ixgBridgeHandler){
         mJavascriptInterface.addCall(ixgBridgeHandler);
+    }
+
+    public void registerInterceptor(IXGInterceptor javaApiInterceptor){
+        mJavascriptInterface.addInterceptor(javaApiInterceptor);
+    }
+
+    public void setDefaultHandler(IJavascriptInterface javascriptInterface){
+        mJavascriptInterface.setDefaultCall(javascriptInterface);
     }
 
     /**
      * 根据协议处理接受到的数据，将参数发送到JS
      */
     protected WebViewClient generateBridgeWebViewClient() {
-        return new WebViewClient(){
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (mWebViewClient!=null) {
-                    return mWebViewClient.shouldOverrideUrlLoading(view, url);
-                }else {
-                    return super.shouldOverrideUrlLoading(view, url);
-                }
-            }
-
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                if (mWebViewClient!=null) {
-                    mWebViewClient.onPageStarted(view, url, favicon);
-                }else {
-                    super.onPageStarted(view, url, favicon);
-                }
-                BridgeUtil.webViewLoadLocalJs(view, toLoadJs);
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                if (mWebViewClient!=null) {
-                    mWebViewClient.onPageFinished(view, url);
-                }else {
-                    super.onPageFinished(view, url);
-                }
-            }
-
-
-        };
+        return new JSWebViewClient();
     }
 
     @Override
@@ -136,17 +108,19 @@ public class XGNBridge implements IXGJavaCallHandler{
     }
 
     public void onDestroy(){
+        mWebView.setWebViewClient(null);
+        mWebView.setWebChromeClient(null);
+        mWebView.destroy();
         mWebView = null;
         mJavascriptInterface.onDestroy();
     }
 
-    public void setWebViewClient(WebViewClient webViewClient){
-        mWebViewClient = webViewClient;
+    public void setWebViewClient(JSWebViewClient webViewClient){
+        mWebView.setWebViewClient(webViewClient);
     }
 
     public void setWebChromeClient(WebChromeClient webChromeClient){
-        mWebChromeClient = webChromeClient;
-        mWebView.setWebChromeClient(mWebChromeClient);
+        mWebView.setWebChromeClient(webChromeClient);
     }
 
 
