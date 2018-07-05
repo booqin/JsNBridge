@@ -16,7 +16,6 @@ import xinguang.com.xgjsbridge.interfaces.IJavascriptInterface;
 import xinguang.com.xgjsbridge.interfaces.IXGInterceptor;
 import xinguang.com.xgjsbridge.interfaces.IXGToJavaHandler;
 import xinguang.com.xgjsbridge.interfaces.IXGToJsHandler;
-import xinguang.com.xgjsbridge.utils.JsonUtil;
 
 
 /**
