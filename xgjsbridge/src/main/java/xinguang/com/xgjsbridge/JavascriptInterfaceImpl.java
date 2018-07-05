@@ -73,9 +73,8 @@ public class JavascriptInterfaceImpl implements IJavascriptInterface {
                         mNativeCallMap.get(event).handler(paramsString, new CallBackFunction() {
                             @Override
                             public void onCallBack(String data) {
-                                String jsCommand = String.format(callbackId, data);
                                 if (mJavaCallHandler != null) {
-                                    mJavaCallHandler.send(jsCommand);
+                                    mJavaCallHandler.callBack(callbackId, data);
                                 }
                             }
                         });

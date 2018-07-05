@@ -7,7 +7,7 @@ package xinguang.com.xgjsbridge.interfaces;
 public interface CallBackFunction {
     /**
      * 回调方法
-     * @param data 传递到Js端的数据
+     * @param jsonData 传递到Js端的数据 json字符串
      */
-    void onCallBack(String data);
+    void onCallBack(String jsonData);
 }
