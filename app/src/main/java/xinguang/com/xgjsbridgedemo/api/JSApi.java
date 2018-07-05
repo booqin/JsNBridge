@@ -14,8 +14,6 @@ import xinguang.com.xgjsbridge.utils.JsonUtil;
  */
 public class JSApi {
 
-    private static final String NOTIFY_SUBSCRIBE_HANDLE = "javascript:XGJSBridge.subscribeHandler('%s','%s')";
-
     private IXGToJsHandler mJavaCallHandler;
 
     public JSApi(IXGToJsHandler javaCallHandler){
@@ -23,8 +21,7 @@ public class JSApi {
     }
 
     public void notifyTokenChange(){
-        String jsCommand = String.format(NOTIFY_SUBSCRIBE_HANDLE, "userInfoChange", JsonUtil.toJsonString(getUserInfo()));
-        mJavaCallHandler.send(jsCommand);
+        mJavaCallHandler.notify("userInfoChange", JsonUtil.toJsonString(getUserInfo()));
     }
 
     private Object getUserInfo() {

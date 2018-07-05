@@ -16,6 +16,7 @@ import xinguang.com.xgjsbridge.interfaces.IJavascriptInterface;
 import xinguang.com.xgjsbridge.interfaces.IXGInterceptor;
 import xinguang.com.xgjsbridge.interfaces.IXGToJavaHandler;
 import xinguang.com.xgjsbridge.interfaces.IXGToJsHandler;
+import xinguang.com.xgjsbridge.utils.JsonUtil;
 
 
 /**
@@ -25,6 +26,9 @@ import xinguang.com.xgjsbridge.interfaces.IXGToJsHandler;
 public class XGNBridge implements IXGToJsHandler {
 
     private static final String XGJS = "XGJSCore";
+    private static final String NOTIFY_SUBSCRIBE_HANDLE = "javascript:XGJSBridge.subscribeHandler('%s','%s')";
+    private static final String INVOKE_CALLBACK_HANDLE = "javascript:XGJSBridge.invokeCallbackHandler('%s','%s')";
+
 
     private WebView mWebView;
 
@@ -95,6 +99,19 @@ public class XGNBridge implements IXGToJsHandler {
         }
 
     }
+
+    @Override
+    public void notify(String event, String jsonParams) {
+        String jsCommand = String.format(NOTIFY_SUBSCRIBE_HANDLE, event, jsonParams);
+        send(jsCommand);
+    }
+
+    @Override
+    public void callBack(String callBackId, String jsonParams) {
+        String jsCommand = String.format(INVOKE_CALLBACK_HANDLE, callBackId, jsonParams);
+        send(jsCommand);
+    }
+
 
     public void onDestroy(){
         mWebView.setWebViewClient(null);

@@ -22,8 +22,6 @@ import xinguang.com.xgjsbridge.interfaces.IXGToJsHandler;
 
 public class JavascriptInterfaceImpl implements IJavascriptInterface {
 
-    public static final String INVOKE_CALLBACK_HANDLE = "javascript:XGJSBridge.invokeCallbackHandler('%s','%s')";
-
     private Map<String, IXGToJavaHandler> mNativeCallMap;
     private List<IXGInterceptor> mInterceptorList;
 
@@ -75,7 +73,7 @@ public class JavascriptInterfaceImpl implements IJavascriptInterface {
                         mNativeCallMap.get(event).handler(paramsString, new CallBackFunction() {
                             @Override
                             public void onCallBack(String data) {
-                                String jsCommand = String.format(INVOKE_CALLBACK_HANDLE, callbackId, data);
+                                String jsCommand = String.format(callbackId, data);
                                 if (mJavaCallHandler != null) {
                                     mJavaCallHandler.send(jsCommand);
                                 }
