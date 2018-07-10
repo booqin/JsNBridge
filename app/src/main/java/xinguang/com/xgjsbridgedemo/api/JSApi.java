@@ -9,9 +9,9 @@ import xinguang.com.xgjsbridge.utils.JsonUtil;
  * 用于Native调用的JS方法。
  * Created by Boqin on 2017/7/12.
  * Modified by Boqin
- *
  * @Version
  */
+@Deprecated
 public class JSApi {
 
     private IXGToJsHandler mJavaCallHandler;
