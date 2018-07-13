@@ -18,6 +18,12 @@ public interface IXGToJsHandler {
      * @param jsonParams 参数，json字符串格式
      */
     void notify(String event, String jsonParams);
+    /**
+     * 向Js端发送通知
+     * @param event 事件名，对应Js端的subscribe事件
+     * @param jsonParams 参数，json字符串格式
+     */
+    void notify(String event, String jsonParams, String callBackId);
 
     /**
      * 执行回调

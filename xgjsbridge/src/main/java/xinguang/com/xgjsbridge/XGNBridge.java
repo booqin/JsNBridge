@@ -11,21 +11,20 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.Map;
 
+import io.reactivex.Flowable;
 import xinguang.com.xgjsbridge.WebClient.JSWebViewClient;
 import xinguang.com.xgjsbridge.annotations.JsName;
-import xinguang.com.xgjsbridge.annotations.JsParam;
-import xinguang.com.xgjsbridge.handler.JsParamHandler;
+import xinguang.com.xgjsbridge.interfaces.CallBackFunction;
 import xinguang.com.xgjsbridge.interfaces.IJavascriptInterface;
 import xinguang.com.xgjsbridge.interfaces.IXGInterceptor;
 import xinguang.com.xgjsbridge.interfaces.IXGToJavaHandler;
 import xinguang.com.xgjsbridge.interfaces.IXGToJsHandler;
-import xinguang.com.xgjsbridge.interfaces.IParamHandler;
 
 
 /**
@@ -36,6 +35,7 @@ public class XGNBridge implements IXGToJsHandler {
 
     private static final String XGJS = "XGJSCore";
     private static final String NOTIFY_SUBSCRIBE_HANDLE = "javascript:XGJSBridge.subscribeHandler('%s','%s')";
+    private static final String NOTIFY_SUBSCRIBE_WITH_CALLBACK_HANDLE = "javascript:XGJSBridge.subscribeHandler('%s','%s', '%s')";
     private static final String INVOKE_CALLBACK_HANDLE = "javascript:XGJSBridge.invokeCallbackHandler('%s','%s')";
 
 
@@ -43,11 +43,12 @@ public class XGNBridge implements IXGToJsHandler {
 
     private JavascriptInterfaceImpl mJavascriptInterface;
 
+    private Map<String, CallBackFunction> mCallBacks;
+
     private XGNBridge(){
+        mCallBacks = new HashMap<>();
         mJavascriptInterface = new JavascriptInterfaceImpl(this);
     }
-
-    private ArrayDeque arrayDeque;
 
     @SuppressLint("SetJavaScriptEnabled")
     private void init(WebView webView){
@@ -67,12 +68,14 @@ public class XGNBridge implements IXGToJsHandler {
         mWebView.setWebViewClient(generateBridgeWebViewClient());
         mWebView.addJavascriptInterface(mJavascriptInterface, XGJS);
 
+
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         WebSettings settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setDomStorageEnabled(true);
-        arrayDeque = new ArrayDeque();
+
+        registerInterceptor(new CallBackInterceptor(mCallBacks));
 
     }
 
@@ -119,6 +122,12 @@ public class XGNBridge implements IXGToJsHandler {
     }
 
     @Override
+    public void notify(String event, String jsonParams, String callBackId) {
+        String jsCommand = String.format(NOTIFY_SUBSCRIBE_WITH_CALLBACK_HANDLE, event, jsonParams, callBackId);
+        send(jsCommand);
+    }
+
+    @Override
     public void callBack(String callBackId, String jsonParams) {
         String jsCommand = String.format(INVOKE_CALLBACK_HANDLE, callBackId, jsonParams);
         send(jsCommand);
@@ -152,36 +161,19 @@ public class XGNBridge implements IXGToJsHandler {
         return (T) Proxy.newProxyInstance(api.getClassLoader(), new Class<?>[]{api}, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-
+                String name = "";
                 //获取方法的注解
                 JsName jsName = method.getAnnotation(JsName.class);
                 if (jsName!=null) {
-                    String name = jsName.value();
-                    // TODO: 2018/7/10 添加缓存
-                    IParamHandler paramHandler = getHandler(method);
-                    if (paramHandler != null) {
-                        paramHandler.apply(XGNBridge.this, name, args);
-                    }
+                    name = jsName.value();
                 }
-                return null;
+                ServiceMethod serviceMethod = new ServiceMethod(method, mCallBacks, XGNBridge.this, name, args);
+                RxJavaAdapter adapter = new RxJavaAdapter(mCallBacks);
+                return serviceMethod.adapt(adapter);
             }
 
 
         });
-    }
-
-    private IParamHandler getHandler(Method method) {
-        Annotation[][] paramAnnotations = method.getParameterAnnotations();
-        int counts = paramAnnotations.length;
-        for (int count = 0; count < counts; count++) {
-            for (Annotation annotation : paramAnnotations[count]) {
-                if (annotation instanceof JsParam) {
-                    return new JsParamHandler(count);
-                }
-            }
-        }
-
-        return null;
     }
 
 

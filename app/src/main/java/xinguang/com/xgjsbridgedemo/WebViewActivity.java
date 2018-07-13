@@ -3,12 +3,16 @@ package xinguang.com.xgjsbridgedemo;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.Toast;
 
+import io.reactivex.functions.Consumer;
 import xinguang.com.xgjsbridge.XGNBridge;
 import xinguang.com.xgjsbridgedemo.api.JavaApi;
 import xinguang.com.xgjsbridgedemo.api.JsApis;
+import xinguang.com.xgjsbridgedemo.bean.RespBean;
 import xinguang.com.xgjsbridgedemo.bean.UserInfoBean;
 
 /**
@@ -35,7 +39,18 @@ public class WebViewActivity extends Activity{
             public void onClick(View v) {
                 UserInfoBean userInfoBean = new UserInfoBean();
                 userInfoBean.name = "error";
-                jsApiDemo.notifyUserInfoChange(userInfoBean);
+                jsApiDemo.notifyUserInfoChange(userInfoBean).subscribe(new Consumer<RespBean>() {
+                    @Override
+                    public void accept(RespBean s) throws Exception {
+                        Toast.makeText(WebViewActivity.this, s.getName(), Toast.LENGTH_SHORT).show();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                    }
+                });
+//                jsApiDemo.notifyUserInfoChange(userInfoBean);
             }
         });
     }

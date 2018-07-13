@@ -1,7 +1,9 @@
 package xinguang.com.xgjsbridgedemo.api;
 
+import io.reactivex.Observable;
 import xinguang.com.xgjsbridge.annotations.JsName;
 import xinguang.com.xgjsbridge.annotations.JsParam;
+import xinguang.com.xgjsbridgedemo.bean.RespBean;
 import xinguang.com.xgjsbridgedemo.bean.UserInfoBean;
 
 /**
@@ -11,6 +13,6 @@ import xinguang.com.xgjsbridgedemo.bean.UserInfoBean;
 public interface JsApis {
 
     @JsName("userInfoChange")
-    void notifyUserInfoChange(@JsParam UserInfoBean userInfoBean);
+    Observable<RespBean> notifyUserInfoChange(@JsParam UserInfoBean userInfoBean);
 
 }

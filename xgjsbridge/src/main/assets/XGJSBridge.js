@@ -9,7 +9,7 @@
 
     var invokeCallbacks = {};
     var invokeCallbackId = 0;
-    var subscribeCallbacks = {};
+    var subscribeHandlers = {};
 
     /**
     * Web调用App功能
@@ -73,7 +73,7 @@
     */
     function subscribe(event, callback) {
         if((event && typeof event === 'string') && callback && (typeof callback === 'function')){
-            subscribeCallbacks[event] = callback;
+            subscribeHandlers[event] = callback;
         }
     }
 
@@ -82,15 +82,24 @@
     * Web收到App的消息
     * @params event [String] 事件名
     * @params result [String] 参数
+    * @params callbackId [String] 到App端的回调id
     */
-    function subscribeHandler(event, result) {
-        var callback = subscribeCallbacks[event];
+    function subscribeHandler(event, result, callbackId) {
+        var callback = subscribeHandlers[event];
         if (callback) {
             if(result && typeof result === 'string'){
-                callback(JSON.parse(result));
+                var a = subscribeCallbackById(callbackId);
+                a(callback(JSON.parse(result)));
             } else {
                 callback(result);
             }
+        }
+    }
+
+    function subscribeCallbackById(callbackId){
+
+        return function subscribeCallback(result){
+           _invokeHandler('callBackFromJs', result, callbackId)
         }
     }
 

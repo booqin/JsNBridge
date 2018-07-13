@@ -106,8 +106,9 @@
 	}
 
 	//收到App发出的用户信息变化了
-    function receiveUserInfo(info){
+    function receiveUserInfo(info, callbackId){
         document.getElementById('J_UserInfo').innerHTML = '当前用户信息：' + JSON.stringify(info,null,4);
+        return "{\"name\":\"hello java\"}";
     }
 
 	//点击登录

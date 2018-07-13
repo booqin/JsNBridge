@@ -66,7 +66,7 @@ public class JavascriptInterfaceImpl implements IJavascriptInterface {
             public void run() {
                 boolean isFilter = false; //是否过滤
                 for (IXGInterceptor javaApiInterceptor : mInterceptorList) {
-                    isFilter |= javaApiInterceptor.intercept(event, callbackId, mJavaCallHandler);
+                    isFilter |= javaApiInterceptor.intercept(event, callbackId, paramsString, mJavaCallHandler);
                 }
                 if (!isFilter) { //是否过滤
                     if (mNativeCallMap.get(event) != null) { //执行注册的接口

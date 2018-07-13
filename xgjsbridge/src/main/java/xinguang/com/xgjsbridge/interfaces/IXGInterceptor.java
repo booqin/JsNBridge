@@ -6,6 +6,6 @@ package xinguang.com.xgjsbridge.interfaces;
 
 public interface IXGInterceptor {
 
-    boolean intercept(String event, String callbackId, IXGToJsHandler javaCallHandler);
+    boolean intercept(String event, String callbackId, String params, IXGToJsHandler javaCallHandler);
 
 }

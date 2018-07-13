@@ -1,5 +1,7 @@
 package xinguang.com.xgjsbridge.handler;
 
+import android.util.Log;
+
 import xinguang.com.xgjsbridge.interfaces.IXGToJsHandler;
 import xinguang.com.xgjsbridge.interfaces.IParamHandler;
 import xinguang.com.xgjsbridge.utils.JsonUtil;
@@ -12,14 +14,17 @@ import xinguang.com.xgjsbridge.utils.JsonUtil;
 public class JsParamHandler implements IParamHandler {
 
     private int mIndex;
+    private String mCallBackId;
 
-    public JsParamHandler(int index){
+    public JsParamHandler(int index, String callBackId){
         mIndex = index;
+        mCallBackId = callBackId;
     }
 
     @Override
     public void apply(IXGToJsHandler ixgToJsHandler, String name, Object[] params) {
         String paramsJson = JsonUtil.toJsonString(params[mIndex]);
-        ixgToJsHandler.notify(name, paramsJson);
+        Log.d("BQ", "paramsJson:"+paramsJson);
+        ixgToJsHandler.notify(name, paramsJson, mCallBackId);
     }
 }

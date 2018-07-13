@@ -6,6 +6,9 @@ package xinguang.com.xgjsbridge.interfaces;
  */
 
 public interface IJavascriptInterface {
+
+    String CALL_BACK_FROM_JS = "callBackFromJs";
+
     /**
      * 暴露给Js端直接调用的接口
      * @param event 事件名

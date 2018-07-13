@@ -29,3 +29,6 @@
 -keep class xinguang.com.xgjsbridge.JavascriptInterfaceImpl{
     public void *(java.lang.String, java.lang.String, java.lang.String);
 }
+
+-keep class * extends java.lang.annotation.Annotation { *; }
+-keep interface * extends java.lang.annotation.Annotation { *; }
